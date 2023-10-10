@@ -1,0 +1,138 @@
+#include <bits/stdc++.h>
+#include <random>
+
+using namespace std;
+typedef long long ll;
+typedef long double ld;
+
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+template <typename  T>
+using ordered_set = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_order_statistics_node_update>;
+
+const ll N = 2e5 + 5, inf = LONG_MAX, mod = 998244353;
+void fast() { ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr); }
+
+ll mul( ll a,  ll b){
+    return 1LL * a * b %mod;
+}
+
+ll add( ll a , ll b){
+    return (a + b + mod) %mod;
+}
+
+ll fp( ll b , ll p){
+    if(!p)
+        return 1;
+    ll temp = fp(b,p/2);
+    temp = mul(temp,temp)%mod;
+    if(p&1)
+        temp = mul(temp,b);
+    return temp%mod;
+}
+
+ll fact(ll n){
+    ll res = 1;
+    for (int i = 2; i <= n; ++i)
+        res *= i;
+    return res;
+}
+
+ll inv(ll i){
+    return i <= 1 ? i : mod - (long long)(mod/i) * inv(mod % i) % mod;
+}
+
+ll mex(vector<ll> a){
+    set<ll> s;
+    ll n = (ll)a.size();
+
+    for (int i = 0; i < n; ++i)
+        s.insert(a[i]);
+
+    ll cu = 0;
+    for(auto ch : s){
+        if (ch != cu)
+            break;
+        cu++;
+    }
+
+    return cu;
+}
+
+vector<bool> sieveOfEratosthenes(ll n) {
+    vector<bool> isPrime(n + 1, true);
+    isPrime[0] = isPrime[1] = false;
+    for (int i = 2; i * i <= n; i++) {
+        if (isPrime[i]) {
+            for (int j = 2 * i; j <= n; j += i)
+                isPrime[j] = false;
+        }
+    }
+    return isPrime;
+}
+
+ll divis(ll n) {
+    ll r = 1;
+    for (ll i = 1; i <= n/2; ++i) {
+        if (n%r)
+            return r;
+        r++;
+    }
+    return r;
+}
+
+int main() {
+    fast();
+    ll t;
+//    cin >> t;
+    t = 1;
+
+    while (t--) {
+        ll n, x, y;
+        cin >> n;
+        map<ll, ll> m1, m2, mapp;
+
+        if (n > 3) {
+            for (int i = 1; i <= n; ++i)
+                mapp[i] = 0;
+
+            vector<pair<ll, ll>> a;
+            for (int i = 1; i <= n; ++i) {
+                cin >> x >> y;
+                a.emplace_back(x, y);
+                m1[i] = x, m2[i] = y;
+                if (m1[x] && (m1[x] == y || m2[x] == y))
+                    mapp[x] = y;
+                else if (m1[x])
+                    mapp[y] = x;
+                else if (m1[y] && (m1[y] == x || m2[y] == x))
+                    mapp[y] = x;
+                else if (m1[y])
+                    mapp[x] = y;
+            }
+
+            for (int i = 0; i < n; ++i) {
+                x = a[i].first, y = a[i].second;
+                if (!mapp[x] && (m1[x] == y || m2[x] == y))
+                    mapp[x] = y;
+                else if (!mapp[y] && (m1[y] == x || m2[y] == x))
+                    mapp[y] = x;
+                else if (!mapp[x])
+                    mapp[x] = y;
+            }
+            
+            ll ch = 1;
+            cout << ch << ' ';
+            while (mapp[ch] != 1) {
+                cout << mapp[ch] << ' ';
+                ch = mapp[ch];
+            }
+        } else {
+            for (int i = 1; i <= n; ++i)
+                cout << i << ' ';
+        }
+        cout << endl;
+    }
+    return 0;
+}
